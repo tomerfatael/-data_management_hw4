@@ -36,7 +36,7 @@ def ta_aggregation(files, k, aggregation_func):
         # iterate over all files
         for dict in dicts_lst:
             if i < len(dict["ordered"]):
-                dict_name = dict["name"]  # TODO matbe not needed
+                dict_name = dict["name"]
                 current = dict["ordered"][i]
                 all_ranks = [d["ranks"][current] for d in dicts_lst]
                 current_val = aggregation_func(all_ranks)
