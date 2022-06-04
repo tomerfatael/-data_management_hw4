@@ -1,5 +1,3 @@
-
-
 def load_data(filename, rank_name):
     with open(filename) as f:
         data = f.readlines()
@@ -15,9 +13,10 @@ def load_data(filename, rank_name):
 
     return dict(ranks=ranks, ordered=ordered, name=rank_name)
 
+
 def have_k_greater_than_T(seen, k, T):
     cnt = 0
-    for num in seen:
+    for num in seen.values():
         if num >= T:
             cnt += 1
     return cnt >= k
@@ -26,10 +25,33 @@ def have_k_greater_than_T(seen, k, T):
 def ta_aggregation(files, k, aggregation_func):
     dicts_lst = []
     for file in files:
-        dicts_lst.append(load_data(file, file)) #what is rank name???
+        dicts_lst.append(load_data(file, file))
 
+    i = 0
     T = -1
     seen = {}
+    smallest_seen = {}
 
-    while not(have_k_greater_than_T(seen, k, T)):
-#tre
+    while not (have_k_greater_than_T(seen, k, T)):
+        # iterate over all files
+        for dict in dicts_lst:
+            if i < len(dict["ordered"]):
+                dict_name = dict["name"]  # TODO matbe not needed
+                current = dict["ordered"][i]
+                all_ranks = [d["ranks"][current] for d in dicts_lst]
+                current_val = aggregation_func(all_ranks)
+                seen[current] = current_val
+                smallest_seen[dict_name] = dict["ranks"][current]
+
+        # update T
+        T = aggregation_func(smallest_seen.values())
+        i += 1
+
+    # sort seen
+    ans = [(name, seen[name]) for name in seen]
+    ans.sort(key=lambda tup: tup[1], reverse=True)
+    ans = ans[:k]
+    return ans
+
+a = ta_aggregation(["rank1.txt", "rank2.txt", "rank3.txt"], 3, lambda x: sum(x)/len(x))
+print(a)
