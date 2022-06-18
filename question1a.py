@@ -54,4 +54,3 @@ def ta_aggregation(files, k, aggregation_func):
     return ans
 
 a = ta_aggregation(["rank1.txt", "rank2.txt", "rank3.txt"], 3, lambda x: sum(x)/len(x))
-print(a)
